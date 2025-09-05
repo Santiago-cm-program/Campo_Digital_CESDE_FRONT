@@ -4,7 +4,7 @@ import React from "react";
 export default function HeaderPrincipal() {
   console.log("Render")
   return (
-    <header className="w-full bg-green-400 h-14 flex items-center shadow-md">
+    <header className=" w-full bg-green-400 h-14 flex items-center shadow-md">
       <div className="max-w-6xl w-full flex items-center px-4">
         <img
           src="/resources/logo.svg"
