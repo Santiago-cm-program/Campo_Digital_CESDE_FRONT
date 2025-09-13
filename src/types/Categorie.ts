@@ -1,4 +1,4 @@
-export interface Categorie {
+export type Categorie = {
     idCategoria: number;
     categoria: string;
     active: boolean;
