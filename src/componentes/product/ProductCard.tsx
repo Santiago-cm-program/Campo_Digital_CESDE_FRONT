@@ -9,7 +9,7 @@ type Props = {
 
 export default function ProductCard({ product }: Props) {
   return (
-    <div className="group relative flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-300 bg-white shadow-lg transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-2xl">
+    <div className="group relative flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-300 bg-white shadow-lg transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-2xl mb-6">
       <div className="relative mx-3 mt-3 flex h-60 overflow-hidden rounded-xl">
         <Image
           className="object-cover w-full h-full"

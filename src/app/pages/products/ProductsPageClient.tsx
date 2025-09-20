@@ -23,8 +23,6 @@ export default function ProductsPageClient({ products, categories }: Props) {
 
   return (
     <div className="container mx-auto px-4">
-      <h1 className="mb-6 text-2xl font-bold">Página de productos</h1>
-
       <div className="mb-6 max-w-md mx-auto">
         <SearchBar value={query} onChange={setQuery} placeholder="Buscar productos..." />
       </div>

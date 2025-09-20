@@ -9,7 +9,9 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     ...options,
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Basic " + Buffer.from(`${API_USER}:${API_PASSWORD}`).toString("base64"),
+      Authorization:
+        "Basic " +
+        Buffer.from(`${API_USER}:${API_PASSWORD}`).toString("base64"),
       ...(options.headers || {}),
     },
     cache: "no-store",
@@ -17,6 +19,10 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
 
   if (!res.ok) {
     throw new Error(`Request failed: ${res.status} ${res.statusText}`);
+  }
+  
+  if (res.status === 204) {
+    return undefined as T;
   }
 
   return res.json();
@@ -41,7 +47,10 @@ export async function createProduct(product: Product): Promise<Product> {
   });
 }
 
-export async function updateProduct(id: number, product: Partial<Product>): Promise<Product> {
+export async function updateProduct(
+  id: number,
+  product: Partial<Product>
+): Promise<Product> {
   return request<Product>(`/products/${id}`, {
     method: "PATCH",
     body: JSON.stringify(product),
@@ -49,5 +58,5 @@ export async function updateProduct(id: number, product: Partial<Product>): Prom
 }
 
 export async function deleteProduct(id: number): Promise<void> {
-  await request(`/products/${id}`, { method: "DELETE" });
+  await request<void>(`/products/${id}`, { method: "DELETE" });
 }
