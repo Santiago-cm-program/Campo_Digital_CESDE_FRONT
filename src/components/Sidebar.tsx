@@ -1,24 +1,46 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Menu,
   X,
   ChevronLeft,
   ChevronRight,
   Home,
-  Users,
   Settings,
+  LogOut, // 👈 icono de salir
 } from "lucide-react";
 import NavbarLink from "./Autorizacion/NavbarLink";
 
-
-
 export default function Sidebar() {
-  const [open, setOpen] = useState(true); // estado: abierto o colapsado (desktop)
-  const [mobile, setMobile] = useState(false); // estado: visible en móvil
+  const [user, setUser] = useState<any | null>(null);
+  const [loadingUser, setLoadingUser] = useState(true);
+  const [open, setOpen] = useState(true);
+  const [mobile, setMobile] = useState(false);
 
-  // 👉 función para renderizar los links
+  // cargar usuario desde localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+      setLoadingUser(false);
+    }
+  }, []);
+
+  // 👉 logout function
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("username");
+    localStorage.removeItem("password");
+
+    setUser(null); // limpia el estado
+
+    // Redirige al login
+    window.location.href = "/";
+  };
+
   const NavLinks = ({ showText }: { showText: boolean }) => (
     <nav className="flex flex-col gap-4 mt-6">
       <a href="/" className="flex items-center gap-2 hover:text-gray-300">
@@ -26,24 +48,37 @@ export default function Sidebar() {
         <span className={`${showText ? "inline" : "hidden"}`}>Inicio</span>
       </a>
 
-      {/* 👉 Botón de login con modal */}
       <NavbarLink showText={showText} />
 
-      <a href="/usuarios" className="flex items-center gap-2 hover:text-gray-300">
-        <Users className="w-5 h-5" />
-        <span className={`${showText ? "inline" : "hidden"}`}>Usuarios</span>
-      </a>
+      {/* solo si es admin */}
+      {!loadingUser && user?.rol?.descripcion === "ADMIN" && (
+        <a
+          href="/administrar"
+          className="flex items-center gap-2 hover:text-gray-300"
+        >
+          <Settings className="w-5 h-5" />
+          <span className={`${showText ? "inline" : "hidden"}`}>
+            Administrar
+          </span>
+        </a>
+      )}
 
-      <a href="/administrar" className="flex items-center gap-2 hover:text-gray-300">
-        <Settings className="w-5 h-5" />
-        <span className={`${showText ? "inline" : "hidden"}`}>Administrar</span>
-      </a>
+      {/* 👇 botón de logout (solo cuando hay usuario logueado) */}
+      {!loadingUser && user && (
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-2 hover:text-gray-300 mt-4"
+        >
+          <LogOut className="w-5 h-5" />
+          <span className={`${showText ? "inline" : "hidden"}`}>Salir</span>
+        </button>
+      )}
     </nav>
   );
 
   return (
     <>
-      {/* 👉 Sidebar Desktop */}
+      {/* Sidebar Desktop */}
       <aside
         className={`sticky top-0 self-start h-screen ${
           open ? "w-64" : "w-16"
@@ -66,7 +101,7 @@ export default function Sidebar() {
         <NavLinks showText={open} />
       </aside>
 
-      {/* 👉 Sidebar Mobile */}
+      {/* Sidebar Mobile */}
       {mobile && (
         <aside className="fixed inset-y-0 left-0 w-64 bg-green-500 text-white p-4 z-50">
           <div className="flex items-center justify-between">
@@ -80,7 +115,7 @@ export default function Sidebar() {
         </aside>
       )}
 
-      {/* 👉 Botón menú solo en móviles */}
+      {/* Botón menú solo en móviles */}
       <button
         className="md:hidden fixed top-4 left-4 z-50"
         onClick={() => setMobile(true)}
