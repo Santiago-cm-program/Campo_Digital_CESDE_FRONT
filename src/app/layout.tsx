@@ -2,9 +2,12 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { use } from "react";
-import Sidebar from "@/componentes/Sidebar";
-import Footer from "@/componentes/Footer";
-import HeaderPrincipal from "@/componentes/HeaderPrincipal";
+import Sidebar from "@/components/Sidebar";
+import Footer from "@/components/Footer";
+import HeaderPrincipal from "@/components/HeaderPrincipal";
+
+
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,10 +37,11 @@ export default function RootLayout({
           <HeaderPrincipal />
           <div className="flex flex-1">
             <Sidebar />
-            <main className="flex-1">{children}</main>
+            <main className="flex-1">{children}              
+            </main>
           </div>
           <Footer />
-        </div>
+        </div>       
       </body>
     </html>
   );
