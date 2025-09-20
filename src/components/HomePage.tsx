@@ -8,6 +8,11 @@ export default function HomePage() {
         id="novedades"
         className="min-h-screen flex flex-col items-center justify-center bg-cyan-100 p-8">
         <h2 className="text-2xl font-bold mb-4">Novedades</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          <div className="bg-white p-4 shadow rounded-lg">Producto 1</div>
+          <div className="bg-white p-4 shadow rounded-lg">Producto 2</div>
+          <div className="bg-white p-4 shadow rounded-lg">Producto 3</div>
+        </div>
       </section>
 
       <section

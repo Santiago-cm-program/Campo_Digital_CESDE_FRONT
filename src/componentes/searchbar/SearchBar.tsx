@@ -17,7 +17,7 @@ export default function SearchBar({ value, onChange, placeholder }: SearchBarPro
   };
 
   return (
-    <div className="w-full max-w-md">
+    <div className="w-full max-w-md mt-2">
       <div className="relative">
         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
           <svg

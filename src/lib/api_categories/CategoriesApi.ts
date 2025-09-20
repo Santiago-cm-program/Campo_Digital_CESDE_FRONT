@@ -1,53 +1,66 @@
+import axios from "axios";
 import { Categorie } from "@/types/Categorie";
 
 const API_URL = process.env.API_URL!;
-const API_USER = process.env.API_USER!;
-const API_PASSWORD = process.env.API_PASSWORD!;
 
-async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-  const res = await fetch(`${API_URL}${endpoint}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Basic " + Buffer.from(`${API_USER}:${API_PASSWORD}`).toString("base64"),
-      ...(options.headers || {}),
-    },
-    cache: "no-store",
-  });
+function getAxiosInstance() {
+  const username = localStorage.getItem("username");
+  const password = localStorage.getItem("password");
 
-  if (!res.ok) {
-    throw new Error(`Request failed: ${res.status} ${res.statusText}`);
+  if (!username || !password) {
+    throw new Error("Usuario no autenticado");
   }
 
-  return res.json();
+  const basicAuth = btoa(`${username}:${password}`);
+
+  const api = axios.create({
+    baseURL: API_URL,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Basic ${basicAuth}`,
+    },
+  });
+
+  api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      const status = error.response?.status;
+      const statusText = error.response?.statusText;
+      throw new Error(`Request failed: ${status} ${statusText}`);
+    }
+  );
+
+  return api;
 }
 
 export async function getAllCategories(): Promise<Categorie[]> {
-  return request<Categorie[]>("/categories");
+  const { data } = await getAxiosInstance().get<Categorie[]>("/categories");
+  return data;
 }
 
 export async function getActiveCategories(): Promise<Categorie[]> {
-  return request<Categorie[]>("/categories/active");
+  const { data } = await getAxiosInstance().get<Categorie[]>("/categories/active");
+  return data;
 }
 
 export async function getCategoryById(id: number): Promise<Categorie> {
-  return request<Categorie>(`/categories/${id}`);
+  const { data } = await getAxiosInstance().get<Categorie>(`/categories/${id}`);
+  return data;
 }
 
 export async function createCategory(category: Categorie): Promise<Categorie> {
-  return request<Categorie>("/categories", {
-    method: "POST",
-    body: JSON.stringify(category),
-  });
+  const { data } = await getAxiosInstance().post<Categorie>("/categories", category);
+  return data;
 }
 
-export async function updateCategory(id: number, category: Partial<Categorie>): Promise<Categorie> {
-  return request<Categorie>(`/categories/${id}`, {
-    method: "PATCH",
-    body: JSON.stringify(category),
-  });
+export async function updateCategory(
+  id: number,
+  category: Partial<Categorie>
+): Promise<Categorie> {
+  const { data } = await getAxiosInstance().patch<Categorie>(`/categories/${id}`, category);
+  return data;
 }
 
 export async function deleteCategory(id: number): Promise<void> {
-  await request(`/categories/${id}`, { method: "DELETE" });
+  await getAxiosInstance().delete(`/categories/${id}`);
 }
