@@ -11,6 +11,7 @@ export interface LoginResponse {
   nombreCompleto: string;
   activo: boolean;
   username: string;
+  email:string;
   rol: {
     idRol: number;
     descripcion: string;
@@ -26,12 +27,12 @@ export interface LoginResponse {
 const API_URL = "http://localhost:8080/v1/api/Users/POST/Login"; 
 
 export async function login(data: LoginRequest): Promise<LoginResponse> {
-    // Codifica las credenciales en Base64 para la cabecera 'Authorization'
+    
     const base64Credentials = btoa(`${data.username}:${data.password}`);
     
         const response = await axios.post<LoginResponse>(
             API_URL,
-            data, // Aquí se envía el cuerpo del JSON (username y password)
+            data, 
             { 
                 headers: { 
                     "Content-Type": "application/json",
