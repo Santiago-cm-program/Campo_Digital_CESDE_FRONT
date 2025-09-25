@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import {
   Menu,
   X,
@@ -63,16 +64,32 @@ export default function Sidebar() {
         </a>
       )}
 
-      {/* 👇 botón de logout (solo cuando hay usuario logueado) */}
-      {!loadingUser && user && (
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-2 hover:text-gray-300 mt-4"
-        >
-          <LogOut className="w-5 h-5" />
-          <span className={`${showText ? "inline" : "hidden"}`}>Salir</span>
-        </button>
-      )}
+      {/* 👉 Sección Administrar */}
+      <div>
+        <Link href="/administrar" className="flex items-center gap-2 hover:text-gray-300">
+          <Settings className="w-5 h-5" />
+          <span className={`${showText ? "inline" : "hidden"}`}>Administrar</span>
+        </Link>
+
+        {/* Subopciones */}
+        <div className={`ml-6 mt-2 flex flex-col gap-2 ${showText ? "block" : "hidden"}`}>
+          <Link
+            href="/administrar/usuario-administrador"
+            className="flex items-center gap-2 hover:text-gray-300"
+          >
+            <ChevronRight className="w-4 h-4" />
+            <span>Usuario Administrador</span>
+          </Link>
+
+          <Link
+            href="/administrar/usuario-cliente"
+            className="flex items-center gap-2 hover:text-gray-300"
+          >
+            <ChevronRight className="w-4 h-4" />
+            <span>Usuario Cliente</span>
+          </Link>
+        </div>
+      </div>
     </nav>
   );
 
@@ -80,15 +97,13 @@ export default function Sidebar() {
     <>
       {/* Sidebar Desktop */}
       <aside
-        className={`sticky top-0 self-start h-screen ${
-          open ? "w-64" : "w-16"
-        } bg-green-500 text-white p-4 transition-all duration-300`}
+        className={`sticky top-0 self-start h-screen ${open ? "w-64" : "w-16"
+          } bg-green-500 text-white p-4 transition-all duration-300`}
       >
         <div className="flex items-center justify-between">
           <h1
-            className={`font-bold mb-6 transition-all ${
-              open ? "text-xl" : "hidden"
-            }`}
+            className={`font-bold mb-6 transition-all ${open ? "text-xl" : "hidden"
+              }`}
           >
             Campo Digital
           </h1>
