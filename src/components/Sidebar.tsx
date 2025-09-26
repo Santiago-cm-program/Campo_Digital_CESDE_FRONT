@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Menu,
   X,
@@ -64,9 +64,18 @@ export default function Sidebar() {
         </a>
       )}
 
-      {/* 👉 Sección Administrar */}
+      {/* 👇 botón de logout (solo cuando hay usuario logueado) */}
+      {!loadingUser && user && (
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-2 hover:text-gray-300 mt-4"
+        >
+          <LogOut className="w-5 h-5" />
+          <span className={`${showText ? "inline" : "hidden"}`}>Salir</span>
+        </button>
+      )}
       <div>
-        <Link href="/administrar" className="flex items-center gap-2 hover:text-gray-300">
+        <Link href="/pages/administrador" className="flex items-center gap-2 hover:text-gray-300">
           <Settings className="w-5 h-5" />
           <span className={`${showText ? "inline" : "hidden"}`}>Administrar</span>
         </Link>
@@ -74,7 +83,7 @@ export default function Sidebar() {
         {/* Subopciones */}
         <div className={`ml-6 mt-2 flex flex-col gap-2 ${showText ? "block" : "hidden"}`}>
           <Link
-            href="/administrar/usuario-administrador"
+            href="/pages/administrador/usuario-administrador"
             className="flex items-center gap-2 hover:text-gray-300"
           >
             <ChevronRight className="w-4 h-4" />
@@ -82,11 +91,18 @@ export default function Sidebar() {
           </Link>
 
           <Link
-            href="/administrar/usuario-cliente"
+            href="/pages/administrador/usuario-cliente"
             className="flex items-center gap-2 hover:text-gray-300"
           >
             <ChevronRight className="w-4 h-4" />
             <span>Usuario Cliente</span>
+          </Link>
+          <Link
+            href="/pages/administrador/usuario-lista"
+            className="flex items-center gap-2 hover:text-gray-300"
+          >
+            <ChevronRight className="w-4 h-4" />
+            <span>Lista de Usuarios</span>
           </Link>
         </div>
       </div>
