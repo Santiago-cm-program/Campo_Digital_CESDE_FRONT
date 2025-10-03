@@ -25,7 +25,6 @@ export default function IniciarSesion() {
   const [user, setUser] = useState<LoginResponse | null>(null);
 
   // Obtiene la función toast del hook
-  
 
   // Inicializar formulario con valores guardados en localStorage
   useEffect(() => {
@@ -48,9 +47,9 @@ export default function IniciarSesion() {
       setUser(data);
       localStorage.setItem("username", formData.username);
       localStorage.setItem("password", formData.password);
-      localStorage.setItem("user", JSON.stringify(data)); 
+      localStorage.setItem("user", JSON.stringify(data));
 
-      window.location.href = "/HomePage";
+      window.location.href = "/";
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
