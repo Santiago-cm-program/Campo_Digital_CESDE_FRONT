@@ -54,7 +54,7 @@ export default function Sidebar() {
         <span className={`${showText ? "inline" : "hidden"}`}>Productos</span>
       </a>
 
-      <NavbarLink showText={showText} />
+      {!loadingUser && !user && <NavbarLink showText={showText} />}
 
       {/* solo si es admin */}
       {!loadingUser && user?.rol?.descripcion === "ADMIN" && (
