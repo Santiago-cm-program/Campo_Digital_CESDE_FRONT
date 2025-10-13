@@ -3,17 +3,19 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardAction,
+  CardHeader,
   CardContent,
   CardDescription,
   CardFooter,
-  CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
-import { login, LoginRequest, LoginResponse } from "@/lib/Api_user_auth";
+import {
+  login,
+  LoginRequest,
+  LoginResponse,
+} from "@/lib/api_autenticacion/Api_user_auth";
 
 export default function IniciarSesion() {
   const [formData, setFormData] = useState<LoginRequest>({
@@ -24,9 +26,6 @@ export default function IniciarSesion() {
   const [error, setError] = useState("");
   const [user, setUser] = useState<LoginResponse | null>(null);
 
-  // Obtiene la función toast del hook
-
-  // Inicializar formulario con valores guardados en localStorage
   useEffect(() => {
     const savedUsername = localStorage.getItem("username") || "";
     const savedPassword = localStorage.getItem("password") || "";
@@ -48,34 +47,30 @@ export default function IniciarSesion() {
       localStorage.setItem("username", formData.username);
       localStorage.setItem("password", formData.password);
       localStorage.setItem("user", JSON.stringify(data));
-
       window.location.href = "/";
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("Error desconocido");
-      }
+      setError(err instanceof Error ? err.message : "Error desconocido");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Card className="w-full max-w-sm">
+    <Card className="w-full max-w-md bg-white shadow-none border-none">
       <CardHeader>
-        <CardTitle>Login to your account</CardTitle>
-        <CardDescription>Enter your username and password</CardDescription>
-        <CardAction>
-          <Button variant="link">Sign Up</Button>
-        </CardAction>
+        <CardTitle className="text-center text-lg font-semibold">
+          Inicia sesión
+        </CardTitle>
+        <CardDescription className="text-center">
+          Ingresa tus credenciales para continuar
+        </CardDescription>
       </CardHeader>
 
       <CardContent>
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col gap-6">
             <div className="grid gap-2">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="username">Usuario</Label>
               <Input
                 id="username"
                 type="text"
@@ -87,7 +82,7 @@ export default function IniciarSesion() {
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Contraseña</Label>
               <Input
                 id="password"
                 type="password"
@@ -101,26 +96,12 @@ export default function IniciarSesion() {
 
           {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 
-          {user && (
-            <div className="mt-4 p-2 border rounded bg-green-100">
-              <p>
-                <strong>Bienvenido:</strong> {user.nombreCompleto}
-              </p>
-              <p>
-                <strong>Rol:</strong> {user.rol.descripcion}
-              </p>
-              <p>
-                <strong>Dirección:</strong> {user.direccion.descripcion}
-              </p>
-            </div>
-          )}
-
-          <CardFooter className="flex-col gap-2 mt-4">
+          <CardFooter className="flex flex-col gap-2 mt-6">
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Cargando..." : "Login"}
+              {loading ? "Cargando..." : "Ingresar"}
             </Button>
             <Button variant="outline" className="w-full">
-              Login with Google
+              Iniciar con Google
             </Button>
           </CardFooter>
         </form>

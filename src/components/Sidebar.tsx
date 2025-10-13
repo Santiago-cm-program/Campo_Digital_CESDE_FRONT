@@ -11,7 +11,7 @@ import {
   LogOut,
   Package, // 👈 icono de salir
 } from "lucide-react";
-import NavbarLink from "../componentes/Autorizacion/NavbarLink";
+import NavbarLink from "../componentes/autorizacion/NavbarLink";
 
 export default function Sidebar() {
   const [user, setUser] = useState<any | null>(null);
@@ -49,8 +49,11 @@ export default function Sidebar() {
         <span className={`${showText ? "inline" : "hidden"}`}>Inicio</span>
       </a>
 
-      <a href="/pages/products" className="flex items-center gap-2 hover:text-gray-300">
-        <Package  className="w-5 h-5" />
+      <a
+        href="/pages/products"
+        className="flex items-center gap-2 hover:text-gray-300"
+      >
+        <Package className="w-5 h-5" />
         <span className={`${showText ? "inline" : "hidden"}`}>Productos</span>
       </a>
 
