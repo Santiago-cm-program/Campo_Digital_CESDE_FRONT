@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import {
   Menu,
   X,
@@ -9,9 +9,10 @@ import {
   ChevronRight,
   Home,
   Settings,
-  LogOut, // 👈 icono de salir
+  LogOut,
+  Package,
 } from "lucide-react";
-import NavbarLink from "./Autorizacion/NavbarLink";
+import NavbarLink from "../componentes/autorizacion/NavbarLink";
 
 export default function Sidebar() {
   const [user, setUser] = useState<any | null>(null);
@@ -44,24 +45,65 @@ export default function Sidebar() {
 
   const NavLinks = ({ showText }: { showText: boolean }) => (
     <nav className="flex flex-col gap-4 mt-6">
-      <a href="/" className="flex items-center gap-2 hover:text-gray-300">
+      <Link href="/" className="flex items-center gap-2 hover:text-gray-300">
         <Home className="w-5 h-5" />
         <span className={`${showText ? "inline" : "hidden"}`}>Inicio</span>
-      </a>
+      </Link>
 
-      <NavbarLink showText={showText} />
+      <Link
+        href="/pages/products"
+        className="flex items-center gap-2 hover:text-gray-300"
+      >
+        <Package className="w-5 h-5" />
+        <span className={`${showText ? "inline" : "hidden"}`}>Productos</span>
+      </Link>
 
-      {/* solo si es admin */}
+      {!loadingUser && !user && <NavbarLink showText={showText} />}
+
+      {/* 👇 Solo visible si el usuario es ADMIN */}
       {!loadingUser && user?.rol?.descripcion === "ADMIN" && (
-        <a
-          href="/administrar"
-          className="flex items-center gap-2 hover:text-gray-300"
-        >
-          <Settings className="w-5 h-5" />
-          <span className={`${showText ? "inline" : "hidden"}`}>
-            Administrar
-          </span>
-        </a>
+        <div>
+          <Link
+            href="/pages/administrador"
+            className="flex items-center gap-2 hover:text-gray-300"
+          >
+            <Settings className="w-5 h-5" />
+            <span className={`${showText ? "inline" : "hidden"}`}>
+              Administrar
+            </span>
+          </Link>
+
+          {/* Subopciones solo si el texto está visible */}
+          <div
+            className={`ml-6 mt-2 flex flex-col gap-2 ${
+              showText ? "block" : "hidden"
+            }`}
+          >
+            <Link
+              href="/pages/administrador/usuario-administrador"
+              className="flex items-center gap-2 hover:text-gray-300"
+            >
+              <ChevronRight className="w-4 h-4" />
+              <span>Usuario Administrador</span>
+            </Link>
+
+            <Link
+              href="/pages/administrador/usuario-cliente"
+              className="flex items-center gap-2 hover:text-gray-300"
+            >
+              <ChevronRight className="w-4 h-4" />
+              <span>Usuario Cliente</span>
+            </Link>
+
+            <Link
+              href="/pages/administrador/usuario-lista"
+              className="flex items-center gap-2 hover:text-gray-300"
+            >
+              <ChevronRight className="w-4 h-4" />
+              <span>Lista de Usuarios</span>
+            </Link>
+          </div>
+        </div>
       )}
 
       {/* 👇 botón de logout (solo cuando hay usuario logueado) */}
@@ -74,38 +116,6 @@ export default function Sidebar() {
           <span className={`${showText ? "inline" : "hidden"}`}>Salir</span>
         </button>
       )}
-      <div>
-        <Link href="/pages/administrador" className="flex items-center gap-2 hover:text-gray-300">
-          <Settings className="w-5 h-5" />
-          <span className={`${showText ? "inline" : "hidden"}`}>Administrar</span>
-        </Link>
-
-        {/* Subopciones */}
-        <div className={`ml-6 mt-2 flex flex-col gap-2 ${showText ? "block" : "hidden"}`}>
-          <Link
-            href="/pages/administrador/usuario-administrador"
-            className="flex items-center gap-2 hover:text-gray-300"
-          >
-            <ChevronRight className="w-4 h-4" />
-            <span>Usuario Administrador</span>
-          </Link>
-
-          <Link
-            href="/pages/administrador/usuario-cliente"
-            className="flex items-center gap-2 hover:text-gray-300"
-          >
-            <ChevronRight className="w-4 h-4" />
-            <span>Usuario Cliente</span>
-          </Link>
-          <Link
-            href="/pages/administrador/usuario-lista"
-            className="flex items-center gap-2 hover:text-gray-300"
-          >
-            <ChevronRight className="w-4 h-4" />
-            <span>Lista de Usuarios</span>
-          </Link>
-        </div>
-      </div>
     </nav>
   );
 
@@ -113,13 +123,15 @@ export default function Sidebar() {
     <>
       {/* Sidebar Desktop */}
       <aside
-        className={`sticky top-0 self-start h-screen ${open ? "w-64" : "w-16"
-          } bg-green-500 text-white p-4 transition-all duration-300`}
+        className={`sticky top-0 self-start h-screen ${
+          open ? "w-64" : "w-16"
+        } bg-green-500 text-white p-4 transition-all duration-300`}
       >
         <div className="flex items-center justify-between">
           <h1
-            className={`font-bold mb-6 transition-all ${open ? "text-xl" : "hidden"
-              }`}
+            className={`font-bold mb-6 transition-all ${
+              open ? "text-xl" : "hidden"
+            }`}
           >
             Campo Digital
           </h1>
