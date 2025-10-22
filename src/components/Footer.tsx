@@ -12,18 +12,19 @@ export default function Footer() {
           <Link
             href="/"
             aria-label="Ir Al Inicio"
-            className="inline-flex items-center">
-          </Link>
+            className="inline-flex items-center"
+          ></Link>
           <nav className="flex items-center gap-6 text-sm text-neutral-700 dark:text-neutral-300">
             <Link
-              href="/acerca"
+              href="/pages/acerca"
               className="hover:text-black dark:hover:text-white transition-colors"
-              aria-label="Ir a Acerca">
+              aria-label="Ir a Acerca"
+            >
               Acerca de Nosostros
             </Link>
           </nav>
           <p className="mt-2 text-xs text-neutral-600 dark:text-neutral-400">
-            © {new Date().getFullYear()} Tu Empresa. Todos los derechos
+            © {new Date().getFullYear()} Campo Digital. Todos los derechos
             reservados.
           </p>
         </div>

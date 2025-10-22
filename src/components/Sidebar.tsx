@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import {
   Menu,
   X,
@@ -9,7 +10,7 @@ import {
   Home,
   Settings,
   LogOut,
-  Package, // 👈 icono de salir
+  Package,
 } from "lucide-react";
 import NavbarLink from "../componentes/Autorizacion/NavbarLink";
 
@@ -44,29 +45,65 @@ export default function Sidebar() {
 
   const NavLinks = ({ showText }: { showText: boolean }) => (
     <nav className="flex flex-col gap-4 mt-6">
-      <a href="/" className="flex items-center gap-2 hover:text-gray-300">
+      <Link href="/" className="flex items-center gap-2 hover:text-gray-300">
         <Home className="w-5 h-5" />
         <span className={`${showText ? "inline" : "hidden"}`}>Inicio</span>
-      </a>
+      </Link>
 
-      <a href="/pages/products" className="flex items-center gap-2 hover:text-gray-300">
-        <Package  className="w-5 h-5" />
+      <Link
+        href="/pages/products"
+        className="flex items-center gap-2 hover:text-gray-300"
+      >
+        <Package className="w-5 h-5" />
         <span className={`${showText ? "inline" : "hidden"}`}>Productos</span>
-      </a>
+      </Link>
 
-      <NavbarLink showText={showText} />
+      {!loadingUser && !user && <NavbarLink showText={showText} />}
 
-      {/* solo si es admin */}
+      {/* 👇 Solo visible si el usuario es ADMIN */}
       {!loadingUser && user?.rol?.descripcion === "ADMIN" && (
-        <a
-          href="/administrar"
-          className="flex items-center gap-2 hover:text-gray-300"
-        >
-          <Settings className="w-5 h-5" />
-          <span className={`${showText ? "inline" : "hidden"}`}>
-            Administrar
-          </span>
-        </a>
+        <div>
+          <Link
+            href="/pages/administrador"
+            className="flex items-center gap-2 hover:text-gray-300"
+          >
+            <Settings className="w-5 h-5" />
+            <span className={`${showText ? "inline" : "hidden"}`}>
+              Administrar
+            </span>
+          </Link>
+
+          {/* Subopciones solo si el texto está visible */}
+          <div
+            className={`ml-6 mt-2 flex flex-col gap-2 ${
+              showText ? "block" : "hidden"
+            }`}
+          >
+            <Link
+              href="/pages/administrador/usuario-administrador"
+              className="flex items-center gap-2 hover:text-gray-300"
+            >
+              <ChevronRight className="w-4 h-4" />
+              <span>Usuario Administrador</span>
+            </Link>
+
+            <Link
+              href="/pages/administrador/usuario-cliente"
+              className="flex items-center gap-2 hover:text-gray-300"
+            >
+              <ChevronRight className="w-4 h-4" />
+              <span>Usuario Cliente</span>
+            </Link>
+
+            <Link
+              href="/pages/administrador/usuario-lista"
+              className="flex items-center gap-2 hover:text-gray-300"
+            >
+              <ChevronRight className="w-4 h-4" />
+              <span>Lista de Usuarios</span>
+            </Link>
+          </div>
+        </div>
       )}
 
       {/* 👇 botón de logout (solo cuando hay usuario logueado) */}

@@ -1,13 +1,15 @@
 "use client";
 import React, { ReactNode, useEffect } from "react";
+import { createPortal } from "react-dom";
 
-interface ModalProps  {
-    isOpen: boolean;
-    onClose : () => void;
-    children: ReactNode;
+interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  children: ReactNode;
 }
 
 export default function Modal({ isOpen, onClose, children }: ModalProps) {
+  // Permitir cerrar con tecla ESC
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -18,25 +20,28 @@ export default function Modal({ isOpen, onClose, children }: ModalProps) {
 
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+  // Portal: monta el modal sobre <body> para estar siempre encima
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/50 backdrop-blur-sm"
+      onClick={onClose} // Cierra al hacer clic fuera
+    >
       <div
-        className="
-          bg-white p-6 rounded-lg shadow-lg relative w-[400px]
-          transform transition-all duration-300 ease-out
-          opacity-100 scale-100
-          animate-fade-in
-        "
+        onClick={(e) => e.stopPropagation()}
+        className="relative bg-white p-6 rounded-2xl shadow-2xl w-[500px] max-w-full transform transition-all duration-300 animate-fade-in flex flex-col items-center justify-center text-center"
       >
+        {/* Botón para cerrar */}
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 text-gray-600 hover:text-black"
+          className="absolute top-3 right-3 text-gray-500 hover:text-gray-800 transition"
         >
           ✕
         </button>
+
+        {/* Contenido del modal */}
         {children}
       </div>
-    </div>
+    </div>,
+    document.body
   );
-  
 }
