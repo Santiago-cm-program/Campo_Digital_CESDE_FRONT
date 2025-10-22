@@ -8,4 +8,5 @@ export type Product = {
   isActive: boolean;
   categoryId: number;
   categoryName: string;
+  quantity?: number;
 }

@@ -1,15 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getAllProducts, deleteProduct } from "@/lib/api_products/ProductsApi";
+import { getAllProducts, deleteProduct, updateProduct } from "@/lib/api_products/ProductsApi";
 import { Product } from "@/types/Product";
 import ProductTable from "@/componentes/product/ProductTable";
 import SearchBar from "@/componentes/searchbar/SearchBar";
 import { toast } from "sonner";
+import EditProductModal from "@/components/ui/modal";
 
 export default function ProductsPage() {
   const [items, setItems] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     getAllProducts()
@@ -18,8 +20,9 @@ export default function ProductsPage() {
   }, []);
 
   const handleEdit = (product: Product) => {
-    toast.info(`Editar producto: ${product.producto}`);
+    setEditingProduct(product);
   };
+
 
   const handleDelete = async (id: number) => {
     setItems((prev) =>
@@ -61,17 +64,36 @@ export default function ProductsPage() {
 
       <ProductTable
         products={filteredItems}
-        onEdit={(product) => toast.info(`Editar producto: ${product.producto}`)}
-        onDelete={async (id) => {
-          try {
-            await deleteProduct(id);
-            setItems((prev) => prev.filter((p) => p.idProducto !== id));
-            toast.success(`Producto eliminado (ID: ${id})`);
-          } catch {
-            toast.error("Error al eliminar el producto");
-          }
-        }}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
       />
+
+      {editingProduct && (
+        <EditProductModal
+          product={editingProduct}
+          onClose={() => setEditingProduct(null)}
+          onSave={async (updatedProduct) => {
+            try {
+              const saved = await updateProduct(updatedProduct.idProducto, updatedProduct);
+
+              setItems((prev) =>
+                prev.map((p) =>
+                  p.idProducto === saved.idProducto ? saved : p
+                )
+              );
+
+              toast.success("Producto actualizado correctamente");
+            } catch (error) {
+              toast.error("Error al actualizar el producto");
+              console.error(error);
+            } finally {
+              setEditingProduct(null);
+            }
+          }}
+        />
+      )}
+
     </div>
+
   );
 }
