@@ -35,7 +35,7 @@ export function CarouselDemo() {
 
         <Carousel className="w-full">
           <CarouselContent>
-            {productos.map((prd) => (
+            {productos.slice(0,10).map((prd) => (
               <CarouselItem
                 key={prd.idProducto}
                 className="flex justify-center items-center"

@@ -2,7 +2,7 @@
 import { LogIn, UserPlus } from "lucide-react";
 import React, { useState } from "react";
 import Modal from "./Modal";
-import IniciarSesion from "@/componentes/autorizacion/IniciarSesion";
+import IniciarSesion from "@/componentes/Autorizacion/IniciarSesion";
 import Registrar from "./Registrar";
 
 export default function NavbarLink({ showText }: { showText: boolean }) {
