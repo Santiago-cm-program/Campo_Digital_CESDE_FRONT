@@ -14,7 +14,7 @@ export type ClientsDTO = {
   password: string;
   rol: {
     idRol: number;
-    nombre: string;
+    descripcion: string;
   };
   direccion?: {
     idDireccion: number;

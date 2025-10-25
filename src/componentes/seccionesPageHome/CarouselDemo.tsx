@@ -12,12 +12,14 @@ import { Product } from "@/types/Product";
 
 export function CarouselDemo() {
   const [productos, setProductos] = React.useState<Product[]>([]);
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const endpoint = `${apiUrl}/products/GET/active`;
 
   React.useEffect(() => {
-    fetch("http://localhost:8080/api/v1/products/GET/active")
+    fetch(endpoint)
       .then((response) => response.json())
       .then((data) => setProductos(data))
-      .catch((error) => console.error("Error al obtener productos:", error));
+      .catch((error) => console.error("🚨 Error al obtener productos:", error));
   }, []);
 
   if (productos.length === 0) {
@@ -35,7 +37,7 @@ export function CarouselDemo() {
 
         <Carousel className="w-full">
           <CarouselContent>
-            {productos.slice(0,10).map((prd) => (
+            {productos.slice(0, 10).map((prd) => (
               <CarouselItem
                 key={prd.idProducto}
                 className="flex justify-center items-center"
