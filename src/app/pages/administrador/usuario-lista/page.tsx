@@ -12,7 +12,7 @@ export default function UsuariosPage() {
     const [tipoBusqueda, setTipoBusqueda] = useState<"id" | "documento" | "todos">("todos");
     const [mensaje, setMensaje] = useState("");
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const apiUrl = process.env.NEXT_PUBLIC_USER_URL;
 
     // 🔍 Buscar usuarios según tipo de búsqueda
     const buscarUsuarios = async () => {
