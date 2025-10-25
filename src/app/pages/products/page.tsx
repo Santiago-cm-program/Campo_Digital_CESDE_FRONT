@@ -45,9 +45,7 @@ export default function ProductsPage() {
           <button
             onClick={() => setSelectedCategory(null)}
             className={`px-4 py-2 rounded ${
-              !selectedCategory
-                ? "bg-green-600 text-white"
-                : "bg-gray-200"
+              !selectedCategory ? "bg-green-600 text-white" : "bg-gray-200"
             }`}
           >
             Todas
@@ -71,7 +69,7 @@ export default function ProductsPage() {
       {filtered.length > 0 ? (
         <ProductList products={filtered} />
       ) : (
-        <p className="text-gray-500">No se encontraron productos.</p>
+        <p className="text-gray-500">Cargando Productos...</p>
       )}
     </div>
   );

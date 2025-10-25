@@ -100,9 +100,6 @@ export default function IniciarSesion() {
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Cargando..." : "Ingresar"}
             </Button>
-            <Button variant="outline" className="w-full">
-              Iniciar con Google
-            </Button>
           </CardFooter>
         </form>
       </CardContent>
