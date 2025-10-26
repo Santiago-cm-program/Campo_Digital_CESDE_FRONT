@@ -14,7 +14,7 @@ import {
   ShoppingCart,
   ChevronDown,
 } from "lucide-react";
-import NavbarLink from "../componentes/autorizacion/NavbarLink";
+import NavbarLink from "../componentes/Autorizacion/NavbarLink";
 
 export default function Sidebar() {
   const [user, setUser] = useState<any | null>(null);
