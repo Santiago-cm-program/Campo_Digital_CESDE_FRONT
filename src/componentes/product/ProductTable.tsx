@@ -39,7 +39,7 @@ export default function ProductTable({ products, onEdit, onDelete }: Props) {
               {product.descripcion}
             </TableCell>
             <TableCell>${product.precio.toFixed(2)}</TableCell>
-            <TableCell>{product.categoryName}</TableCell>
+            <TableCell>{product.categoryId}</TableCell>
             <TableCell>
               {product.isActive ? (
                 <span className="text-green-600 font-semibold">Activo</span>

@@ -16,23 +16,27 @@ type CartItem = Product & { quantity: number };
 export default function CartPage() {
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
     const [loading, setLoading] = useState(false);
-
     useEffect(() => {
+        if (typeof window === "undefined") return;
+
         const storedCart = localStorage.getItem("cart");
-        if (storedCart) {
-            try {
-                const parsed = JSON.parse(storedCart) as CartItem[];
+
+        if (!storedCart) return;
+
+        try {
+            const parsed = JSON.parse(storedCart);
+            if (Array.isArray(parsed)) {
                 setCartItems(parsed);
-            } catch (err) {
-                console.error("Error parsing cart:", err);
-                localStorage.removeItem("cart");
             }
+        } catch (err) {
+            console.error("Error al parsear carrito:", err);
         }
     }, []);
 
-
     useEffect(() => {
-        localStorage.setItem("cart", JSON.stringify(cartItems));
+        if (cartItems.length > 0) {
+            localStorage.setItem("cart", JSON.stringify(cartItems));
+        }
     }, [cartItems]);
 
 
