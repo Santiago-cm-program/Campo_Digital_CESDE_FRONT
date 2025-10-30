@@ -14,7 +14,7 @@ import {
   ShoppingCart,
   ChevronDown,
 } from "lucide-react";
-import NavbarLink from "../componentes/autorizacion/NavbarLink";
+import NavbarLink from "../componentes/autontono/NavbarLink";
 
 // ✅ Tipado del usuario
 interface User {
