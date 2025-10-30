@@ -52,7 +52,7 @@ export default function UsuariosPage() {
       if (usuariosArray.length === 0) {
         setMensaje("No se encontraron usuarios.");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error al obtener usuarios:", error);
       setMensaje("Error al buscar usuarios. Verifica los datos o el servidor.");
     } finally {

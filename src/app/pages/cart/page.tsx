@@ -90,7 +90,7 @@ export default function CartPage() {
             localStorage.removeItem("cart");
 
 
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Error al procesar compra:", err);
             toast.error("Error al procesar la compra. Intenta nuevamente.");
             setLoading(false)

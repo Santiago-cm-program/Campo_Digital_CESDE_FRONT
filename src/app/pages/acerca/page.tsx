@@ -11,7 +11,7 @@ export default function AboutPage() {
         <div className="flex-1 space-y-5">
           <h2 className="text-4xl font-extrabold text-green-800">Nuestra Historia</h2>
           <h4 className="text-lg italic text-green-700">
-            "Cultivando confianza desde 2023"
+            &quot;Cultivando confianza desde 2023&quot;
           </h4>
           <p className="text-gray-700 leading-relaxed">
             En <span className="font-semibold text-green-700">Campo Digital</span> comenzamos con una misión clara: ofrecer a los agricultores productos de la más alta calidad para facilitar el cultivo y el cuidado de sus terrenos. 
@@ -45,7 +45,7 @@ export default function AboutPage() {
         <div className="flex-1 space-y-5">
           <h2 className="text-4xl font-extrabold text-green-800">Misión</h2>
           <h4 className="text-lg italic text-green-700">
-            "Proveer soluciones agrícolas que promuevan el crecimiento, la sostenibilidad y el éxito"
+            &quot;Proveer soluciones agrícolas que promuevan el crecimiento, la sostenibilidad y el éxito&quot;
           </h4>
           <p className="text-gray-700 leading-relaxed">
             En Campo Digital, nuestra misión es ofrecer productos de calidad superior que mejoren los cultivos, optimicen recursos y promuevan prácticas sostenibles.
@@ -60,7 +60,7 @@ export default function AboutPage() {
         <div className="flex-1 space-y-5">
           <h2 className="text-4xl font-extrabold text-green-800">Visión</h2>
           <h4 className="text-lg italic text-green-700">
-            "Ser líderes en la provisión de productos agrícolas innovadores y sostenibles a nivel mundial"
+            &quot;Ser líderes en la provisión de productos agrícolas innovadores y sostenibles a nivel mundial&quot;
           </h4>
           <p className="text-gray-700 leading-relaxed">
             Aspiramos a ser la plataforma líder en e-commerce agrícola, ofreciendo una experiencia de compra excepcional y productos que impulsen el crecimiento de nuestros clientes.

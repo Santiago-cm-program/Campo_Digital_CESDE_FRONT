@@ -35,7 +35,7 @@ export default function ProductsPage() {
 
     try {
       await deleteProduct(id);
-    } catch (error) {
+    } catch  {
       toast.error("Error al desactivar el producto");
       setItems((prev) =>
         prev.map((p) =>

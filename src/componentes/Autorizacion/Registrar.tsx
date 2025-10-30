@@ -5,21 +5,43 @@ import { UserPlus } from "lucide-react";
 import dynamic from "next/dynamic";
 import { toast } from "sonner";
 
-// Importamos Toaster dinámicamente para evitar problemas con SSR
+// Toaster dinámico (evita errores SSR)
 const Toaster = dynamic(() => import("sonner").then((mod) => mod.Toaster), {
   ssr: false,
 });
 
+// Tipos de datos esperados
+interface TipoCliente {
+  idTipoCliente: number;
+  tipoCliente: string;
+}
+
+interface TipoDocumento {
+  idTipoDocumento: number;
+  tipoDocumento: string;
+}
+
+interface Ciudad {
+  codigoCiudad: string;
+  ciudad: string;
+}
+
+interface Departamento {
+  codigoDepartamento: string;
+  departamento: string;
+  ciudades: Ciudad[];
+}
+
 interface RegistrarProps {
-  onSuccess: () => void; // Función que cerrará el modal
+  onSuccess: () => void; // función para cerrar modal
 }
 
 export default function Registrar({ onSuccess }: RegistrarProps) {
   const [loading, setLoading] = useState(false);
-  const [tiposCliente, setTiposCliente] = useState<any[]>([]);
-  const [tiposDocumento, setTiposDocumento] = useState<any[]>([]);
-  const [departamentos, setDepartamentos] = useState<any[]>([]);
-  const [ciudadesFiltradas, setCiudadesFiltradas] = useState<any[]>([]);
+  const [tiposCliente, setTiposCliente] = useState<TipoCliente[]>([]);
+  const [tiposDocumento, setTiposDocumento] = useState<TipoDocumento[]>([]);
+  const [departamentos, setDepartamentos] = useState<Departamento[]>([]);
+  const [ciudadesFiltradas, setCiudadesFiltradas] = useState<Ciudad[]>([]);
 
   const [form, setForm] = useState({
     idTipoCliente: "",
@@ -35,56 +57,50 @@ export default function Registrar({ onSuccess }: RegistrarProps) {
     codigoCiudad: "",
   });
 
-  // 🔹 Cargar datos desde las APIs
+  // 🔹 Cargar datos del formulario (clientes, documentos, departamentos)
   useEffect(() => {
-    Promise.all([
-      fetch("http://localhost:8080/v1/api/typeclient").then((res) =>
-        res.json()
-      ),
-      fetch("http://localhost:8080/v1/api/TypeDocumento").then((res) =>
-        res.json()
-      ),
-      fetch("http://localhost:8080/v1/api/Users/departamentos").then((res) =>
-        res.json()
-      ),
-    ])
-      .then(([clientes, documentos, departamentos]) => {
+    const cargarDatos = async () => {
+      try {
+        const [clientes, documentos, departamentos] = await Promise.all([
+          fetch("https://campo-digital-cesde.onrender.com/v1/api/typeclient").then((r) => r.json()),
+          fetch("https://campo-digital-cesde.onrender.com/v1/api/TypeDocumento").then((r) => r.json()),
+          fetch("https://campo-digital-cesde.onrender.com/v1/api/Users/departamentos").then((r) => r.json()),
+        ]);
+
         setTiposCliente(clientes);
         setTiposDocumento(documentos);
         setDepartamentos(departamentos);
-      })
-      .catch(() => toast.error("Error al cargar los datos del formulario ❌"));
+      } catch (error) {
+        console.error(error);
+        toast.error("❌ Error al cargar los datos del formulario");
+      }
+    };
+
+    cargarDatos();
   }, []);
 
-  // 🔹 Manejar cambios en los inputs
+  // 🔹 Manejo de cambios en inputs
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+    setForm((prev) => ({ ...prev, [name]: value }));
 
-    // 🔸 Si cambia el departamento, filtramos las ciudades
+    // Si cambia el departamento, filtrar ciudades
     if (name === "codigoDepartamento") {
       const dep = departamentos.find((d) => d.codigoDepartamento === value);
-      setCiudadesFiltradas(dep ? dep.ciudades : []);
-      setForm((prev) => ({ ...prev, codigoCiudad: "" })); // reset ciudad
+      setCiudadesFiltradas(dep?.ciudades || []);
+      setForm((prev) => ({ ...prev, codigoCiudad: "" }));
     }
   };
 
-  // 🔹 Enviar datos a la API
+  // 🔹 Enviar formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (
-      !form.email ||
-      !form.password ||
-      !form.nombreCompleto ||
-      !form.codigoDepartamento ||
-      !form.fechaNacimiento
-    ) {
-      toast.error("Por favor, completa los campos obligatorios");
+    // Validar campos requeridos
+    if (!form.email || !form.password || !form.nombreCompleto || !form.codigoDepartamento || !form.fechaNacimiento) {
+      toast.error("⚠️ Por favor, completa los campos obligatorios");
       return;
     }
 
@@ -107,6 +123,7 @@ export default function Registrar({ onSuccess }: RegistrarProps) {
 
     try {
       setLoading(true);
+
       const res = await fetch("http://localhost:8080/v1/api/Users/POST", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -117,12 +134,7 @@ export default function Registrar({ onSuccess }: RegistrarProps) {
 
       toast.success("✅ Usuario registrado exitosamente");
 
-      if (onSuccess) {
-        setTimeout(() => {
-          onSuccess(); // Cierra el modal después de 1s
-        }, 1000);
-      }
-      // Reiniciar formulario
+      // Limpiar formulario
       setForm({
         idTipoCliente: "",
         idTipoDocumento: "",
@@ -137,6 +149,9 @@ export default function Registrar({ onSuccess }: RegistrarProps) {
         codigoCiudad: "",
       });
       setCiudadesFiltradas([]);
+
+      // Cerrar modal tras 1 segundo
+      setTimeout(() => onSuccess(), 1000);
     } catch (error) {
       console.error(error);
       toast.error("❌ No se pudo registrar el usuario");
@@ -147,15 +162,8 @@ export default function Registrar({ onSuccess }: RegistrarProps) {
 
   return (
     <div className="w-full max-w-2xl mx-auto bg-white p-8 rounded-2xl shadow-xl overflow-y-auto max-h-[90vh] border border-gray-100">
-      {/* Añadimos el Toaster con un z-index alto para evitar que el modal lo tape */}
       <Toaster richColors position="top-right" style={{ zIndex: 9999 }} />
-      {/* Botón de prueba para verificar que el toast funciona */}
-      {/* <button
-        onClick={() => toast.success("✅ Toast de prueba")}
-        className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
-      >
-        Probar Toast
-      </button> */}
+
       {/* Encabezado */}
       <div className="flex items-center justify-center gap-2 mb-6">
         <UserPlus className="w-7 h-7 text-green-600" />
@@ -163,15 +171,10 @@ export default function Registrar({ onSuccess }: RegistrarProps) {
       </div>
 
       {/* Formulario */}
-      <form
-        onSubmit={handleSubmit}
-        className="grid grid-cols-1 md:grid-cols-2 gap-5"
-      >
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {/* Tipo Cliente */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Tipo de Cliente
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Cliente</label>
           <select
             name="idTipoCliente"
             value={form.idTipoCliente}
@@ -190,9 +193,7 @@ export default function Registrar({ onSuccess }: RegistrarProps) {
 
         {/* Tipo Documento */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Tipo de Documento
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de Documento</label>
           <select
             name="idTipoDocumento"
             value={form.idTipoDocumento}
@@ -211,9 +212,7 @@ export default function Registrar({ onSuccess }: RegistrarProps) {
 
         {/* Nombre */}
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Nombre Completo
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Nombre Completo</label>
           <input
             type="text"
             name="nombreCompleto"
@@ -227,9 +226,7 @@ export default function Registrar({ onSuccess }: RegistrarProps) {
 
         {/* Teléfono */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Teléfono
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
           <input
             type="text"
             name="telefono"
@@ -242,9 +239,7 @@ export default function Registrar({ onSuccess }: RegistrarProps) {
 
         {/* Documento */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Número de Documento
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Número de Documento</label>
           <input
             type="text"
             name="numeroDocumento"
@@ -257,9 +252,7 @@ export default function Registrar({ onSuccess }: RegistrarProps) {
 
         {/* Fecha de nacimiento */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Fecha de Nacimiento
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Fecha de Nacimiento</label>
           <input
             type="date"
             name="fechaNacimiento"
@@ -271,9 +264,7 @@ export default function Registrar({ onSuccess }: RegistrarProps) {
 
         {/* Email */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Correo Electrónico
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
           <input
             type="email"
             name="email"
@@ -287,9 +278,7 @@ export default function Registrar({ onSuccess }: RegistrarProps) {
 
         {/* Contraseña */}
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Contraseña
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
           <input
             type="password"
             name="password"
@@ -303,9 +292,7 @@ export default function Registrar({ onSuccess }: RegistrarProps) {
 
         {/* Departamento */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Departamento
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Departamento</label>
           <select
             name="codigoDepartamento"
             value={form.codigoDepartamento}
@@ -324,9 +311,7 @@ export default function Registrar({ onSuccess }: RegistrarProps) {
 
         {/* Ciudad */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Ciudad
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Ciudad</label>
           <select
             name="codigoCiudad"
             value={form.codigoCiudad}
@@ -346,9 +331,7 @@ export default function Registrar({ onSuccess }: RegistrarProps) {
 
         {/* Dirección */}
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Dirección / Descripción
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Dirección / Descripción</label>
           <textarea
             name="descripcion"
             value={form.descripcion}

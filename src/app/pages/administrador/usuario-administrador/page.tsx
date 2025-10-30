@@ -63,9 +63,9 @@ export default function UsuarioAdministradorPage() {
         contrasena: "",
         email: "",
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      setMensaje(`❌ ${err.message}`);
+      setMensaje(`❌ ${err}`);
     } finally {
       setLoading(false);
     }

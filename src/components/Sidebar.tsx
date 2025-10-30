@@ -16,33 +16,42 @@ import {
 } from "lucide-react";
 import NavbarLink from "../componentes/autorizacion/NavbarLink";
 
+// ✅ Tipado del usuario
+interface User {
+  rol?: {
+    descripcion?: string;
+  };
+  [key: string]: unknown;
+}
+
 export default function Sidebar() {
-  const [user, setUser] = useState<any | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loadingUser, setLoadingUser] = useState(true);
   const [open, setOpen] = useState(true);
   const [mobile, setMobile] = useState(false);
   const [openAdmin, setOpenAdmin] = useState(false);
 
-  // cargar usuario desde localStorage
+  // ✅ cargar usuario desde localStorage
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedUser = localStorage.getItem("user");
       if (storedUser) {
-        setUser(JSON.parse(storedUser));
+        try {
+          setUser(JSON.parse(storedUser));
+        } catch (error) {
+          console.error("Error al parsear el usuario:", error);
+        }
       }
       setLoadingUser(false);
     }
   }, []);
 
-  // 👉 logout function
+  // ✅ logout
   const handleLogout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("username");
     localStorage.removeItem("password");
-
-    setUser(null); // limpia el estado
-
-    // Redirige al login
+    setUser(null);
     window.location.href = "/";
   };
 
@@ -50,7 +59,7 @@ export default function Sidebar() {
     <nav className="flex flex-col gap-4 mt-6">
       <Link href="/" className="flex items-center gap-2 hover:text-gray-300">
         <Home className="w-5 h-5" />
-        <span className={`${showText ? "inline" : "hidden"}`}>Inicio</span>
+        {showText && <span>Inicio</span>}
       </Link>
 
       <Link
@@ -58,7 +67,7 @@ export default function Sidebar() {
         className="flex items-center gap-2 hover:text-gray-300"
       >
         <Package className="w-5 h-5" />
-        <span className={`${showText ? "inline" : "hidden"}`}>Productos</span>
+        {showText && <span>Productos</span>}
       </Link>
 
       <Link
@@ -66,27 +75,21 @@ export default function Sidebar() {
         className="flex items-center gap-2 hover:text-gray-300"
       >
         <ShoppingCart className="w-5 h-5" />
-        <span className={`${showText ? "inline" : "hidden"}`}>
-          Carrito de compras
-        </span>
+        {showText && <span>Carrito de compras</span>}
       </Link>
 
+      {/* 👇 solo si el usuario no está logueado */}
       {!loadingUser && !user && <NavbarLink showText={showText} />}
 
-      {/* 👇 Solo visible si el usuario es ADMIN */}
+      {/* 👇 solo si es ADMIN */}
       {!loadingUser && user?.rol?.descripcion === "ADMIN" && (
         <div>
-          {/* Botón principal del menú de administración */}
           <button
             onClick={() => setOpenAdmin((prev) => !prev)}
             className="flex items-center gap-2 hover:text-gray-300 w-full"
           >
             <Settings className="w-5 h-5" />
-            <span className={`${showText ? "inline" : "hidden"}`}>
-              Administrar
-            </span>
-
-            {/* Ícono de despliegue */}
+            {showText && <span>Administrar</span>}
             {showText &&
               (openAdmin ? (
                 <ChevronDown className="w-4 h-4 ml-auto" />
@@ -95,7 +98,7 @@ export default function Sidebar() {
               ))}
           </button>
 
-          {/* Subopciones */}
+          {/* Submenú Admin */}
           <div
             className={`ml-6 flex flex-col gap-2 overflow-hidden transition-all duration-300 ease-in-out ${
               openAdmin && showText
@@ -138,14 +141,14 @@ export default function Sidebar() {
         </div>
       )}
 
-      {/* 👇 botón de logout (solo cuando hay usuario logueado) */}
+      {/* 👇 logout (solo logueado) */}
       {!loadingUser && user && (
         <button
           onClick={handleLogout}
           className="flex items-center gap-2 hover:text-gray-300 mt-4"
         >
           <LogOut className="w-5 h-5" />
-          <span className={`${showText ? "inline" : "hidden"}`}>Salir</span>
+          {showText && <span>Salir</span>}
         </button>
       )}
     </nav>
@@ -160,14 +163,7 @@ export default function Sidebar() {
         } bg-green-500 text-white p-4 transition-all duration-300`}
       >
         <div className="flex items-center justify-between">
-          <h1
-            className={`font-bold mb-6 transition-all ${
-              open ? "text-xl" : "hidden"
-            }`}
-          >
-            Campo Digital
-          </h1>
-
+          {open && <h1 className="font-bold mb-6 text-xl">Campo Digital</h1>}
           <button className="hidden md:block" onClick={() => setOpen(!open)}>
             {open ? <ChevronLeft /> : <ChevronRight />}
           </button>
@@ -185,12 +181,11 @@ export default function Sidebar() {
               <X className="w-6 h-6" />
             </button>
           </div>
-
           <NavLinks showText={true} />
         </aside>
       )}
 
-      {/* Botón menú solo en móviles */}
+      {/* Botón menú móvil */}
       <button
         className="md:hidden fixed top-4 left-4 z-50"
         onClick={() => setMobile(true)}

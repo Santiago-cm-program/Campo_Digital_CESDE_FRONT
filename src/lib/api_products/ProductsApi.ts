@@ -1,16 +1,20 @@
 import axios from "axios";
 import { Product } from "@/types/Product";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL!;
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
+// --- Instancia pública ---
 const publicApi = axios.create({
   baseURL: API_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
+  headers: { "Content-Type": "application/json" },
 });
 
+// --- Instancia privada con autenticación básica ---
 function getPrivateApi() {
+  if (typeof window === "undefined") {
+    throw new Error("LocalStorage no está disponible en el servidor");
+  }
+
   const username = localStorage.getItem("username");
   const password = localStorage.getItem("password");
 
@@ -29,40 +33,59 @@ function getPrivateApi() {
   });
 }
 
-async function requestPrivate<T>(endpoint: string, options: any = {}): Promise<T> {
+// --- Manejo de errores seguro ---
+function handleAxiosError(error: unknown): never {
+  // ✅ Verificamos si es un error de Axios sin depender del tipado de axios.isAxiosError
+  if (typeof error === "object" && error !== null && "isAxiosError" in error) {
+    const err = error as { response?: { status?: number; statusText?: string } };
+    const status = err.response?.status ?? "Sin código";
+    const statusText = err.response?.statusText ?? "Error desconocido";
+    throw new Error(`Request failed: ${status} ${statusText}`);
+  }
+
+  // ✅ Verificamos si es un Error nativo
+  if (error instanceof Error) {
+    throw new Error(error.message);
+  }
+
+  // ✅ Cualquier otro caso desconocido
+  throw new Error("Error desconocido en la solicitud");
+}
+
+// --- Peticiones privadas ---
+async function requestPrivate<T>(
+  endpoint: string,
+  options: Record<string, unknown> = {}
+): Promise<T> {
   try {
-    const res = await getPrivateApi().request<T>({
+    const api = getPrivateApi();
+    const res = await api.request<T>({
       url: endpoint,
       ...options,
     });
     return res.data;
-  } catch (error: any) {
-    if (error.response) {
-      throw new Error(
-        `Request failed: ${error.response.status} ${error.response.statusText}`
-      );
-    }
-    throw new Error(error.message || "Request failed");
+  } catch (error: unknown) {
+    handleAxiosError(error);
   }
 }
 
-async function requestPublic<T>(endpoint: string, options: any = {}): Promise<T> {
+// --- Peticiones públicas ---
+async function requestPublic<T>(
+  endpoint: string,
+  options: Record<string, unknown> = {}
+): Promise<T> {
   try {
     const res = await publicApi.request<T>({
       url: endpoint,
       ...options,
     });
     return res.data;
-  } catch (error: any) {
-    if (error.response) {
-      throw new Error(
-        `Request failed: ${error.response.status} ${error.response.statusText}`
-      );
-    }
-    throw new Error(error.message || "Request failed");
+  } catch (error: unknown) {
+    handleAxiosError(error);
   }
 }
 
+// --- Funciones CRUD de productos ---
 export async function getAllProducts(): Promise<Product[]> {
   return requestPrivate<Product[]>("/products/GET/all", { method: "GET" });
 }
