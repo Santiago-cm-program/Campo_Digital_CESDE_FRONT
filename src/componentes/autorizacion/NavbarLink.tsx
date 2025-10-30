@@ -1,9 +1,9 @@
 "use client";
 import { LogIn, UserPlus } from "lucide-react";
 import React, { useState } from "react";
-import Modal from "@/componentes/autontono/Modal";
-import IniciarSesion from "@/componentes/autontono/IniciarSesion";
-import Registrar from "@/componentes/autontono/Registrar";
+import Modal from "@/componentes/autorizacion/Modal";
+import IniciarSesion from "@/componentes/autorizacion/IniciarSesion";
+import Registrar from "@/componentes/autorizacion/Registrar";
 
 export default function NavbarLink({ showText }: { showText: boolean }) {
   const [loginOpen, setLoginOpen] = useState(false);
