@@ -113,7 +113,7 @@ export default function Registrar({ onSuccess }: RegistrarProps) {
       fechaNacimiento: form.fechaNacimiento,
       email: form.email,
       password: form.password,
-      idRol: 5,
+      idRol: 2,
       activo: true,
       direccion: {
         codigoCiudad: form.codigoCiudad,
