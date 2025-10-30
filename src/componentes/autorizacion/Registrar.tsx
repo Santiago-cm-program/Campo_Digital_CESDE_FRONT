@@ -124,7 +124,7 @@ export default function Registrar({ onSuccess }: RegistrarProps) {
     try {
       setLoading(true);
 
-      const res = await fetch("http://localhost:8080/v1/api/Users/POST", {
+      const res = await fetch("https://campo-digital-cesde.onrender.com/v1/api/Users/POST", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
